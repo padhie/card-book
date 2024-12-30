@@ -189,7 +189,7 @@ function fillBook() {
         prevPage = document.getElementById(node.id);
     }
 
-    numOfPapers = pageNo;
+    numOfPapers = pageNo + 1;
     lastPage = numOfPapers + 1;
 
     let tmpZIndex = 1;
@@ -199,8 +199,8 @@ function fillBook() {
         tmpZIndex++;
     }
 
-
-    console.log(pages);
+    let lastPageElement = document.querySelector('.last-page');
+    lastPageElement.id = 'p' + pageNo;
 }
 
 function createPages() {
