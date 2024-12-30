@@ -1,23 +1,20 @@
 const pageTemplate = `
-<div id="{FRONT_OR_BACK}{PAGE_NO}" class="back-content">
+<div id="{FRONT_OR_BACK_SHORT}{PAGE_NO}" class="{FRONT_OR_BACK}-content">
     <div class="page-image top-left-image">
         <img alt="{NAME_01}" src="{IMAGE_01}">
-        <p>{NAME_01}</p>
     </div>
     <div class="page-image top-right-image">
         <img alt="{NAME_02}" src="{IMAGE_02}">
-        <p>{NAME_02}</p>
     </div>
     <div class="page-image bottom-left-image">
-        <img alt="{NAME_03}" src="{IMAGE_03">
-        <p>{NAME_03}</p>
+        <img alt="{NAME_03}" src="{IMAGE_03}">
     </div>
     <div class="page-image bottom-right-image">
         <img alt="{NAME_04}" src="{IMAGE_04}">
-        <p>{NAME_04}</p>
     </div>
-</div>
-`;
+</div>`;
+const emptyPageTemplate = `
+<div id="{FRONT_OR_BACK_SHORT}{PAGE_NO}" class="{FRONT_OR_BACK}-content"></div>`;
 const doublepageTempalte = `
 <div id="p{PAGE_NO}" class="paper">
     <div class="front">
@@ -26,8 +23,7 @@ const doublepageTempalte = `
     <div class="back">
         {BACK_PAGE}
     </div>
-</div>
-`;
+</div>`;
 
 const cardList = [
     {'name': 'Magician of Black Chaos', 'image': 'https://static.wikia.nocookie.net/yugioh/images/0/06/MagicianofBlackChaos-SBTK-EN-UR-1E.png/revision/latest?cb=20191207202615'},
@@ -143,10 +139,6 @@ const prevBtn = document.querySelector("#prev-btn");
 const nextBtn = document.querySelector("#next-btn");
 const book = document.querySelector("#book");
 
-const paper1 = document.querySelector("#p1");
-const paper2 = document.querySelector("#p2");
-const paper3 = document.querySelector("#p3");
-
 // Event Listener
 prevBtn.addEventListener("click", goPrevPage);
 nextBtn.addEventListener("click", goNextPage);
@@ -157,31 +149,96 @@ let currentPage = 1;
 let numOfPapers = 3;
 let lastPage = numOfPapers + 1;
 
-fillBook();
 checkBtn();
+fillBook();
 
 function fillBook() {
     const pages = createPages();
+    let frontOrBack = 'f';
+    let pageNo = 2; // 1 page is cover
+    let prevPage = document.getElementById('p1');
+
+    for (let i=0; i<pages.length; i=i+2) {
+        let frontPageNo = i;
+        let backPageNo = i+1;
+
+        let frontPage = pages[frontPageNo]
+            .replaceAll('{PAGE_NO}', pageNo)
+            .replaceAll('{FRONT_OR_BACK_SHORT}', 'f')
+            .replaceAll('{FRONT_OR_BACK}', 'front');
+
+        let backPage = emptyPageTemplate;
+        if (pages[backPageNo] !== undefined) {
+            backPage = pages[backPageNo];
+        }
+        backPage = backPage
+            .replaceAll('{PAGE_NO}', pageNo)
+            .replaceAll('{FRONT_OR_BACK_SHORT}', 'b')
+            .replaceAll('{FRONT_OR_BACK}', 'back');
+
+
+        let pageLetter = doublepageTempalte
+            .replaceAll('{PAGE_NO}', pageNo)
+            .replaceAll('{FRONT_PAGE}', frontPage)
+            .replaceAll('{BACK_PAGE}', backPage);
+
+        let node = htmlToNode(pageLetter);
+        prevPage.after(node);
+        pageNo++;
+
+        prevPage = document.getElementById(node.id);
+    }
+
+    numOfPapers = pageNo;
+    lastPage = numOfPapers + 1;
+
+    let tmpZIndex = 1;
+    for (let i=(pageNo-1); i>0; i--) {
+        let page = document.getElementById('p' + i);
+        page.style.zIndex = tmpZIndex;
+        tmpZIndex++;
+    }
+
+
+    console.log(pages);
 }
 
 function createPages() {
     let pages = [];
     const chunks = chunkCards(cardList);
-    for (let chunk in chunks) {
+    for (let chunk of chunks) {
+        const fullChunk = fullArray(chunk, 4);
         pages.push(
             pageTemplate
-                .replaceAll('{NAME_01}', chunk[0].name)
-                .replaceAll('{IMAGE_01}', chunk[0].image)
-                .replaceAll('{NAME_02}', chunk[1].name)
-                .replaceAll('{IMAGE_02}', chunk[1].image)
-                .replaceAll('{NAME_03}', chunk[2].name)
-                .replaceAll('{IMAGE_03}', chunk[2].image)
-                .replaceAll('{NAME_04}', chunk[3].name)
-                .replaceAll('{IMAGE_04}', chunk[3].image)
+                .replaceAll('{NAME_01}', fullChunk[0].name)
+                .replaceAll('{IMAGE_01}', fullChunk[0].image)
+                .replaceAll('{NAME_02}', fullChunk[1].name)
+                .replaceAll('{IMAGE_02}', fullChunk[1].image)
+                .replaceAll('{NAME_03}', fullChunk[2].name)
+                .replaceAll('{IMAGE_03}', fullChunk[2].image)
+                .replaceAll('{NAME_04}', fullChunk[3].name)
+                .replaceAll('{IMAGE_04}', fullChunk[3].image)
         );
     }
 
     return pages;
+}
+
+function fullArray(array, amount) {
+    for (let i=0; i<amount; i++) {
+        if (array[i] === undefined) {
+            array[i] = {name: '', image: ''};
+        }
+    }
+
+    return array;
+}
+
+function htmlToNode(html) {
+    let div = document.createElement('div');
+    div.innerHTML = html.trim();
+
+    return div.firstChild;
 }
 
 function chunkCards(cards) {

@@ -47,7 +47,6 @@ body {
 .front {
     z-index: 1;
     backface-visibility: hidden;
-    border-left: 3px solid powderblue;
 }
 
 .back {
@@ -63,8 +62,15 @@ body {
     align-items: center;
 }
 
+.front-content {
+    background-image: url(./assets/inlay_right.png);
+    background-size: 100%;
+}
+
 .back-content {
-    transform: rotateY(180deg)
+    transform: rotateY(180deg);
+    background-image: url(./assets/inlay_left.png);
+    background-size: 100%;
 }
 
 /* Paper flip effect */
@@ -73,7 +79,7 @@ body {
     transform: rotateY(-180deg);
 }
 
-/* Controller Buttons */
+/* Buttons */
 button {
     border: none;
     background-color: transparent;
@@ -81,69 +87,96 @@ button {
     margin: 10px;
     transition: transform 0.5s;
 }
-
 button:focus {
     outline: none;
 }
-
 button:hover i {
     color: #636363;
 }
-
 i {
     font-size: 50px;
     color: gray;
 }
 
 /* Paper stack order */
-#p1 {
-    z-index: 3;
-}
-#p2 {
-    z-index: 2;
-}
-#p3 {
-    z-index: 1;
-}
+/*#p1 {*/
+/*    z-index: 3;*/
+/*}*/
+/*#p2 {*/
+/*    z-index: 2;*/
+/*}*/
+/*#p3 {*/
+/*!*    z-index: 1;*!*/
+/*}*/
+/*.pages:last-of-type(div) {*/
+/*!*    z-index: 1;*!*/
+/*}*/
 
-
+/* Background */
+#front_outlay img,
+#back_outlay img {
+    width: 100%;
+    height: 100%;
+}
 
 .hide {
     display: none;
 }
 
+/* card positions */
 .page-image {
     margin: 5px;
     max-height: 45%;
     max-width: 45%;
 }
-
 .page-image img {
     max-height: 90%;
     max-width: 90%;
 }
-.page-image.top-left-image {
+.front-content .page-image.top-left-image {
     top: 5px;
-    left: 5px;
+    left: 18px;
     position: absolute;
 }
-.page-image.top-right-image {
+.front-content .page-image.top-right-image {
     float: right;
     top: 5px;
     right: 5px;
     position: absolute;
 }
-.page-image.bottom-left-image {
-    bottom: 5px;
-    left: 5px;
+.front-content .page-image.bottom-left-image {
+    bottom: 20px;
+    left: 18px;
     position: absolute;
 }
-.page-image.bottom-right-image {
-    bottom: 5px;
+.front-content .page-image.bottom-right-image {
+    float: right;
+    bottom: 20px;
     right: 5px;
     position: absolute;
 }
-
+.back-content .page-image.top-left-image {
+    top: 5px;
+    left: 5px;
+    position: absolute;
+}
+.back-content .page-image.top-right-image {
+    float: right;
+    top: 5px;
+    right: 18px;
+    position: absolute;
+}
+.back-content .page-image.bottom-left-image {
+    bottom: 20px;
+    left: 5px;
+    position: absolute;
+}
+.back-content .page-image.bottom-right-image {
+    float: right;
+    bottom: 20px;
+    right: 18px;
+    position: absolute;
+}
 .page-image.top-right-image img,
 .page-image.bottom-right-image img {
     float: right;
